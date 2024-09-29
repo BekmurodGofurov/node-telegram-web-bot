@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Card from './components/card/card';
 import Cart from './components/cart/cart';
@@ -51,6 +51,16 @@ const App = () => {
     tg.MainButton.text = "Sotib olish :)";
     tg.MainButton.show();
   }
+
+  const onSentData = useCallback(() => {
+    tg.sendData(JSON.stringify(cartItems))
+  }, [cartItems]);
+
+  useEffect(() => {
+    tg.onEvent('mainButtonClicked', onSentData)
+
+    return() => tg.offEvent('mainButtonClicked', onSentData);
+  }, [onSentData])
 
   return (
     <>
