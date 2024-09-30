@@ -5,6 +5,12 @@ const bot = new TelegramBot(token, {polling: true});
 
 
 const bootstrap = () => {
+
+    bot.setMyCommands([
+        { command: "/start", description: "Botni qayta ishga tushrish"},
+        { command: "/fruit", description: "Open web app by inline button"}
+    ])
+
     bot.on('message', async msg => {
         const chatId = msg.chat.id
         const text = msg.text
@@ -22,6 +28,18 @@ const bootstrap = () => {
             )
         }
 
+        if (text == "/fruit") {
+            await bot.sendMessage(
+                chatId, "Pasdagi tugama orqali web apni ochishingiz mumkun", {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{text: "Web App", web_app: {url: "https://node-telegram-web-bot.vercel.app"} }]
+                        ]
+                    }
+                }
+            )
+        }
+
         if (msg.web_app_data?.data) {
             try {
                 const data = JSON.parse(msg.web_app_data?.data)
@@ -29,6 +47,7 @@ const bootstrap = () => {
                 await bot.sendMessage(chatId, "Bizga ishonch bildirganingiz uchun rahmat, siz sotib olgan mevalar ro'yhati.")
 
                 for (item of data) {
+                    await bot.sendPhoto(chatId, item.Image)
                     await bot.sendMessage(chatId, `${item.title} - ${item.quontity}X`)
                 }
 

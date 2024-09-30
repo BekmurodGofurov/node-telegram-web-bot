@@ -53,7 +53,21 @@ const App = () => {
   }
 
   const onSentData = useCallback(() => {
-    tg.sendData(JSON.stringify(cartItems))
+    const queryID = tg.initDataUnsafe?.query_id;
+
+    if (queryID) {
+      fetch("http://localhost:8000/web-data", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartItems)
+      })
+      
+    } else {
+      tg.sendData(JSON.stringify(cartItems))
+    }
+
   }, [cartItems]);
 
   useEffect(() => {
